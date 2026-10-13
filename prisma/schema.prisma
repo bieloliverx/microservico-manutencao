@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Manutencao {
+  manutencao_id               BigInt    @id @default(autoincrement())
+  tipo_servico_id             BigInt
+  usuario_id                  BigInt?
+  veiculoId                   BigInt    @map("veiculo_id")
+  manutencao_tipo             Int
+  manutencao_descricao        String    @db.Text
+  manutencao_quilometragem    Int
+  manutencao_iniciado         DateTime  @db.DateTime(0)
+  manutencao_previsao_termino DateTime? @db.DateTime(0)
+  manutencao_concluido        DateTime? @db.DateTime(0)
+  manutencao_custo_total      Decimal?  @db.Decimal(10, 2)
+  manutencao_criado           DateTime  @db.DateTime(0)
+  manutencao_atualizado       DateTime  @db.DateTime(0)
+  manutencao_status           Int
+
+  @@index([tipo_servico_id], map: "tipo_servico_id_idx")
+  @@index([usuario_id], map: "usuario_id_idx")
+  @@map("manutencao")
+}
+
+model manutencao_preco {
+  manutencao_preco_id          BigInt    @id @default(autoincrement())
+  tipo_servico_id              BigInt
+  manutencao_preco_criado      DateTime? @db.DateTime(0)
+  manutencao_preco_valor_base  Decimal?  @db.Decimal(10, 2)
+  manutencao_preco_acrescimo   Decimal?  @db.Decimal(10, 2)
+  manutencao_preco_desconto    Decimal?  @db.Decimal(10, 2)
+  manutencao_preco_valor_final Decimal?  @db.Decimal(10, 2)
+  manutencao_preco_status      Int?
+
+  @@index([tipo_servico_id], map: "tipo_servico_id_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model progamacao_manutencao {
+  progamacao_manutencao_id                     BigInt    @id @default(autoincrement())
+  veiculo_id                                   BigInt?
+  progamacao_manutencao_descricao              String?   @db.VarChar(255)
+  progamacao_manutencao_quilometragem_prevista Int?
+  progamacao_manutencao_data_prevista          DateTime? @db.Date
+  progamacao_manutencao_concluida              Int?      @db.TinyInt
+  progamacao_manutencao_criado                 DateTime? @db.DateTime(0)
+  progamacao_manutencao_status                 Int?
+}
+
+model servico_manutencao {
+  servico_manutencao_id                   BigInt    @id @default(autoincrement())
+  manutencao_id                           BigInt
+  servico_manutencao_descricao            String?   @db.VarChar(255)
+  servico_manutencao_custo_parcial        Decimal?  @db.Decimal(10, 2)
+  servico_manutencao_criado               DateTime? @db.DateTime(0)
+  servico_manutencao_imprevistol          Int?      @db.TinyInt
+  servico_manutencao_imprevisto_descricao String?   @db.Text
+  servico_manutencao_custo_adicional      Decimal?  @db.Decimal(10, 2)
+  servico_manutencao_status               Int?
+
+  @@index([manutencao_id], map: "manutencao_id_idx")
+}
+
+model tipo_servico {
+  tipo_servico_id        BigInt  @id @default(autoincrement())
+  tipo_servico_nome      String? @db.VarChar(100)
+  tipo_servico_descricao String? @db.VarChar(45)
+  tipo_servico_status    Int?
+}
