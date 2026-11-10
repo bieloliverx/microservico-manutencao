@@ -8,7 +8,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME = 'microservico-manutencao'
+        APP_NAME = 'aluguelveiculo-manutencao'
     }
 
     stages {
