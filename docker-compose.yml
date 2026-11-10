@@ -4,9 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    image: rentcar-manutencao:latest
+    image: aluguelveiculo-manutencao:latest
     
-    container_name: rentcar-manutencao
+    container_name: aluguelveiculo-manutencao
 
     ports:
       - "7545:7545"
