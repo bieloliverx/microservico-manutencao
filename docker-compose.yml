@@ -1,13 +1,19 @@
-version: '3.8'
-
 services:
-  microservico-manutencao:
-    container_name: microservico-manutencao
+  frota:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+
+    image: rentcar-manutencao:latest
+    
+    container_name: rentcar-manutencao
+
     ports:
-      - "3000:3000"
+      - "7545:7545"
+
     env_file:
       - .env
+    
+    environment:
+      PORT: "7545"
+      NODE_ENV: development
