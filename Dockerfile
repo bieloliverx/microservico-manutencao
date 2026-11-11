@@ -1,30 +1,36 @@
-# Estágio 1: Build
-FROM node:20-alpine AS builder
+# Imagem Node.js 24
+FROM node:24-bookworm-slim
 
+# Diretório da aplicação
 WORKDIR /app
 
-COPY package*.json ./
-COPY prisma ./prisma/
+# Dependências necessárias ao Prisma
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        openssl \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
+# Copiar arquivos de dependências
+COPY package*.json ./
+
+# Instalar dependências
 RUN npm ci
 
+# Copiar código-fonte
 COPY . .
 
-RUN npx prisma generate
-RUN npm run build
+# Gerar Prisma Client com variável temporária
+RUN DATABASE_URL="placeholder" npx prisma generate && \
+    npm run build && \
+    find dist -name "main.js"
 
-# Estágio 2: Execução
-FROM node:20-alpine AS runner
+# Configuração da aplicação
+ENV NODE_ENV=development
+ENV PORT=7545
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --only=production
-
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
+# Porta da aplicação
 EXPOSE 7545
 
-CMD ["node", "dist/main"]
+# Inicialização da aplicação
+CMD ["npm", "run", "start:prod"]
