@@ -16,4 +16,4 @@ services:
     
     environment:
       PORT: "7545"
-      NODE_ENV: development
+      NODE_ENV: production
