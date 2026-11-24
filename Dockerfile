@@ -21,7 +21,7 @@ RUN npm ci
 COPY . .
 
 # Gerar Prisma Client com variável temporária
-RUN DB_URL="placeholder" npx prisma generate && \
+RUN DATABASE_URL="placeholder" npx prisma generate && \
     npm run build && \
     find dist -name "main.js"
 
